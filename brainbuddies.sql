@@ -60,3 +60,14 @@ ALTER TABLE `users`
 --
 -- Database: `chatappv1`
 --
+CREATE DATABASE IF NOT EXISTS brain_buddies;
+
+USE brain_buddies;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    google_id VARCHAR(255) UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
