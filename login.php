@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user_id;
             $_SESSION['username'] = $db_username;
             
-            // Redirect to user dashboard
-            header("Location: user-dashboard.php");
+            // Redirect to user home page
+            header("Location: userhome.html");
             exit();
         } else {
             // Incorrect password
@@ -62,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Close the database connection
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

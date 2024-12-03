@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Set session variable and redirect to the dashboard
             $_SESSION['faculty_id'] = $row['id'];
             $_SESSION['faculty_username'] = $row['username'];
-            header("Location: faculty-dashboard.php"); // Redirect to faculty dashboard
+            header("Location: facultyhome.html"); // Redirect to faculty dashboard
             exit();
         } else {
             // Incorrect password
