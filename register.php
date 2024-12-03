@@ -45,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $stmt->bind_param("sss", $username, $email, $hashed_password);
             if ($stmt->execute()) {
-                // Redirect to success page
-                header("Location: success.html");
+                // Redirect to login page
+                header("Location: login.php");
                 exit();
             } else {
                 $error_message = "Registration failed: " . $stmt->error; // Provide error feedback
