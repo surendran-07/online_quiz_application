@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
         if (password_verify($password, $db_password)) {
             $_SESSION['user_id'] = $user_id;
             $_SESSION['username'] = $db_username;
-            header("Location: userhome.html");
+            header("Location: userhome.php");
             exit();
         } else {
             $login_error = "Incorrect password. Please try again.";
