@@ -45,9 +45,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $stmt->bind_param("sss", $username, $email, $hashed_password);
             if ($stmt->execute()) {
-                // Redirect to login page
-                header("Location: login.php");
-                exit();
+                // Get the new user's ID
+                $user_id = $conn->insert_id;
+
+                // Create a personalized table for the user
+                $user_table_name = "user_" . $user_id;
+                $create_table_sql = "CREATE TABLE $user_table_name (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    data_key VARCHAR(100) NOT NULL,
+                    data_value TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )";
+
+                if ($conn->query($create_table_sql) === TRUE) {
+                    // Redirect to login page
+                    header("Location: login.php");
+                    exit();
+                } else {
+                    $error_message = "Error creating user-specific table: " . $conn->error;
+                }
             } else {
                 $error_message = "Registration failed: " . $stmt->error; // Provide error feedback
             }
@@ -61,83 +77,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Close the database connection
 $conn->close();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Register</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', Arial, sans-serif;
-            background: #f7f9fc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .login-container {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .btn {
-            width: 100%;
-            padding: 10px;
-        }
-        .redirect {
-            text-align: center;
-            margin-top: 15px;
-        }
-        .redirect a {
-            color: #6e8efb;
-        }
-        .alert {
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <h1>User Register</h1>
-        <?php if ($error_message): ?>
-            <div class="alert alert-danger" role="alert">
-                <?= htmlspecialchars($error_message) ?>
-            </div>
-        <?php endif; ?>
-        <form action="register.php" method="POST">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <div class="mb-3">
-                <label for="confirm-password" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="confirm-password" name="confirm-password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
-        <div class="redirect">
-            <p>Already have an account? <a href="login.php">Login here</a></p>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
