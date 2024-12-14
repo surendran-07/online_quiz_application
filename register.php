@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $user_id = $conn->insert_id;
 
                 // Create a personalized table for the user
-                $user_table_name = "user_" . $user_id;
+                $user_table_name = $username;
                 $create_table_sql = "CREATE TABLE $user_table_name (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     data_key VARCHAR(100) NOT NULL,
