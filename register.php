@@ -45,9 +45,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $stmt->bind_param("sss", $username, $email, $hashed_password);
             if ($stmt->execute()) {
-                // Redirect to login page
-                header("Location: login.php");
-                exit();
+                // Get the new user's ID
+                $user_id = $conn->insert_id;
+
+                // Create a personalized table for the user
+                $user_table_name = $username;
+                $create_table_sql = "CREATE TABLE $user_table_name (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    data_key VARCHAR(100) NOT NULL,
+                    data_value TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )";
+
+                if ($conn->query($create_table_sql) === TRUE) {
+                    // Redirect to login page
+                    header("Location: login.php");
+                    exit();
+                } else {
+                    $error_message = "Error creating user-specific table: " . $conn->error;
+                }
             } else {
                 $error_message = "Registration failed: " . $stmt->error; // Provide error feedback
             }
