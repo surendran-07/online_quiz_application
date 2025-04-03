@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['check_username'])) {
     if ($user_check_result->num_rows > 0) {
         $show_quiz = true;
         $quiz_username = $user_name;
-        $message = "<div class='alert success'>Welcome to the quiz, $user_name!</div>";
+        $message = "<div class='alert success'>Welcome to the Physics Quiz, $user_name!</div>";
     } else {
         $message = "<div class='alert error'>User not registered. Please register first.</div>";
     }
@@ -33,24 +33,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_quiz'])) {
     $user_name = $_POST['username'];
     $score = 0;
 
-    if (isset($_POST['q1'])) $score += $_POST['q1'];
-    if (isset($_POST['q2'])) $score += $_POST['q2'];
-    if (isset($_POST['q3'])) $score += $_POST['q3'];
-    if (isset($_POST['q4'])) $score += $_POST['q4'];
-    if (isset($_POST['q5'])) $score += $_POST['q5'];
-    if (isset($_POST['q6'])) $score += $_POST['q6'];
-    if (isset($_POST['q7'])) $score += $_POST['q7'];
-    if (isset($_POST['q8'])) $score += $_POST['q8'];
-    if (isset($_POST['q9'])) $score += $_POST['q9'];
-    if (isset($_POST['q10'])) $score += $_POST['q10'];
+    // Calculate score based on correct answers
+    if (isset($_POST['q1']) && $_POST['q1'] == "1") $score += 1;
+    if (isset($_POST['q2']) && $_POST['q2'] == "1") $score += 1;
+    if (isset($_POST['q3']) && $_POST['q3'] == "1") $score += 1;
+    if (isset($_POST['q4']) && $_POST['q4'] == "1") $score += 1;
+    if (isset($_POST['q5']) && $_POST['q5'] == "1") $score += 1;
+    if (isset($_POST['q6']) && $_POST['q6'] == "1") $score += 1;
+    if (isset($_POST['q7']) && $_POST['q7'] == "1") $score += 1;
+    if (isset($_POST['q8']) && $_POST['q8'] == "1") $score += 1;
+    if (isset($_POST['q9']) && $_POST['q9'] == "1") $score += 1;
+    if (isset($_POST['q10']) && $_POST['q10'] == "1") $score += 1;
 
-    $sql = "INSERT INTO quiz_results (username, score) VALUES ('$user_name', $score)";
+    // Save to physics_quiz_results table
+    $sql = "INSERT INTO physics_quiz_results (username, score) VALUES ('$user_name', $score)";
     $message = $conn->query($sql) === TRUE 
-        ? "<div class='alert success'>Your score of $score has been saved!</div>" 
+        ? "<div class='alert success'>Your physics quiz score of $score/10 has been saved!</div>" 
         : "<div class='alert error'>Error: " . $conn->error . "</div>";
+    
+    $show_quiz = false;
 }
 
-$sql = "SELECT username, score FROM quiz_results ORDER BY score DESC LIMIT 5";
+// Get top 5 physics quiz scores
+$sql = "SELECT username, score FROM physics_quiz_results ORDER BY score DESC LIMIT 5";
 $result = $conn->query($sql);
 $conn->close();
 ?>
@@ -60,7 +65,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Application</title>
+    <title>Physics Quiz</title>
     <style>
         * {
             margin: 0;
@@ -70,7 +75,7 @@ $conn->close();
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
+            background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d);
             color: #fff;
             display: flex;
             flex-direction: column;
@@ -152,8 +157,10 @@ $conn->close();
             justify-content: center;
             align-items: center;
             padding: 30px;
-            background: #fff;
+            background: rgba(255, 255, 255, 0.9);
             color: #444;
+            margin: 20px;
+            border-radius: 10px;
         }
 
         .form-section {
@@ -167,7 +174,7 @@ $conn->close();
             width: 100%;
             padding: 12px;
             margin: 10px 0;
-            border: 2px solid #6a11cb;
+            border: 2px solid #1a2a6c;
             border-radius: 5px;
             font-size: 16px;
             outline: none;
@@ -175,14 +182,14 @@ $conn->close();
         }
 
         .form-section input:focus {
-            border-color: #2575fc;
+            border-color: #b21f1f;
         }
 
         .form-section button {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
-            background: #6a11cb;
+            background: #1a2a6c;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -193,7 +200,7 @@ $conn->close();
         }
 
         .form-section button:hover {
-            background: #2575fc;
+            background: #b21f1f;
         }
 
         /* Quiz Container */
@@ -279,7 +286,7 @@ $conn->close();
         }
 
         .quiz-btn {
-            background: #6a11cb;
+            background: #1a2a6c;
             color: #fff;
             border: none;
             padding: 15px 30px;
@@ -291,7 +298,7 @@ $conn->close();
         }
 
         .quiz-btn:hover {
-            background: #2575fc;
+            background: #b21f1f;
         }
 
         .quiz-btn:disabled {
@@ -304,7 +311,7 @@ $conn->close();
             margin-bottom: 30px;
             text-align: center;
             font-weight: bold;
-            color: #6a11cb;
+            color: #1a2a6c;
             font-size: 20px;
             max-width: 700px;
         }
@@ -332,7 +339,7 @@ $conn->close();
         }
 
         .leaderboard th {
-            background: #6a11cb;
+            background: #1a2a6c;
             color: #fff;
         }
 
@@ -348,15 +355,32 @@ $conn->close();
         .welcome-message {
             font-size: 36px;
             margin-bottom: 20px;
-            color: #6a11cb;
+            color: #1a2a6c;
             text-align: center;
             display: <?php echo $show_quiz ? 'none' : 'block'; ?>;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .alert.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .alert.error {
+            background-color: #f44336;
+            color: white;
         }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <h1>Quiz Application</h1>
+        <h1>Physics Quiz</h1>
         <div class="links">
             <!-- <a href="#leaderboard">Leaderboard</a>
             <a href="#contact">Contact</a> -->
@@ -372,14 +396,14 @@ $conn->close();
     </div>
 
     <div class="container">
-        <h1 class="welcome-message">Welcome to the Quiz</h1>
+        <h1 class="welcome-message">Welcome to the Physics Quiz</h1>
         <?php echo $message; ?>
 
         <?php if (!$show_quiz): ?>
         <div class="form-section">
             <form method="POST" action="">
                 <input type="text" name="username" placeholder="Enter Username" required>
-                <button type="submit" name="check_username">Start Quiz</button>
+                <button type="submit" name="check_username">Start Physics Quiz</button>
             </form>
         </div>
         <?php endif; ?>
@@ -395,82 +419,82 @@ $conn->close();
                     
                     <!-- Question 1 -->
                     <div class="question active" id="question-1">
-                        <p>1. What is the capital of France?</p>
-                        <label><input type="radio" name="q1" value="1"> Paris</label>
-                        <label><input type="radio" name="q1" value="0"> Rome</label>
-                        <label><input type="radio" name="q1" value="0"> London</label>
+                        <p>1. What is the SI unit of force?</p>
+                        <label><input type="radio" name="q1" value="1"> Newton</label>
+                        <label><input type="radio" name="q1" value="0"> Joule</label>
+                        <label><input type="radio" name="q1" value="0"> Watt</label>
                     </div>
 
                     <!-- Question 2 -->
                     <div class="question" id="question-2">
-                        <p>2. Which planet is known as the Red Planet?</p>
-                        <label><input type="radio" name="q2" value="1"> Mars</label>
-                        <label><input type="radio" name="q2" value="0"> Venus</label>
-                        <label><input type="radio" name="q2" value="0"> Jupiter</label>
+                        <p>2. Which law states that for every action there is an equal and opposite reaction?</p>
+                        <label><input type="radio" name="q2" value="1"> Newton's Third Law</label>
+                        <label><input type="radio" name="q2" value="0"> Newton's First Law</label>
+                        <label><input type="radio" name="q2" value="0"> Newton's Second Law</label>
                     </div>
 
                     <!-- Question 3 -->
                     <div class="question" id="question-3">
-                        <p>3. What is the largest ocean on Earth?</p>
-                        <label><input type="radio" name="q3" value="1"> Pacific Ocean</label>
-                        <label><input type="radio" name="q3" value="0"> Atlantic Ocean</label>
-                        <label><input type="radio" name="q3" value="0"> Indian Ocean</label>
+                        <p>3. What is the acceleration due to gravity on Earth?</p>
+                        <label><input type="radio" name="q3" value="1"> 9.8 m/s²</label>
+                        <label><input type="radio" name="q3" value="0"> 6.7 m/s²</label>
+                        <label><input type="radio" name="q3" value="0"> 10.2 m/s²</label>
                     </div>
 
                     <!-- Question 4 -->
                     <div class="question" id="question-4">
-                        <p>4. Who wrote "Romeo and Juliet"?</p>
-                        <label><input type="radio" name="q4" value="1"> William Shakespeare</label>
-                        <label><input type="radio" name="q4" value="0"> Charles Dickens</label>
-                        <label><input type="radio" name="q4" value="0"> Mark Twain</label>
+                        <p>4. Which physicist developed the theory of relativity?</p>
+                        <label><input type="radio" name="q4" value="1"> Albert Einstein</label>
+                        <label><input type="radio" name="q4" value="0"> Isaac Newton</label>
+                        <label><input type="radio" name="q4" value="0"> Galileo Galilei</label>
                     </div>
 
                     <!-- Question 5 -->
                     <div class="question" id="question-5">
-                        <p>5. What is the chemical symbol for water?</p>
-                        <label><input type="radio" name="q5" value="1"> H2O</label>
-                        <label><input type="radio" name="q5" value="0"> CO2</label>
-                        <label><input type="radio" name="q5" value="0"> NaCl</label>
+                        <p>5. What type of energy is stored in a stretched spring?</p>
+                        <label><input type="radio" name="q5" value="1"> Elastic potential energy</label>
+                        <label><input type="radio" name="q5" value="0"> Kinetic energy</label>
+                        <label><input type="radio" name="q5" value="0"> Thermal energy</label>
                     </div>
 
                     <!-- Question 6 -->
                     <div class="question" id="question-6">
-                        <p>6. What is the smallest prime number?</p>
-                        <label><input type="radio" name="q6" value="1"> 2</label>
-                        <label><input type="radio" name="q6" value="0"> 1</label>
-                        <label><input type="radio" name="q6" value="0"> 3</label>
+                        <p>6. What is the speed of light in a vacuum?</p>
+                        <label><input type="radio" name="q6" value="1"> 3 × 10⁸ m/s</label>
+                        <label><input type="radio" name="q6" value="0"> 3 × 10⁵ m/s</label>
+                        <label><input type="radio" name="q6" value="0"> 3 × 10¹⁰ m/s</label>
                     </div>
 
                     <!-- Question 7 -->
                     <div class="question" id="question-7">
-                        <p>7. Which country is known as the Land of the Rising Sun?</p>
-                        <label><input type="radio" name="q7" value="1"> Japan</label>
-                        <label><input type="radio" name="q7" value="0"> China</label>
-                        <label><input type="radio" name="q7" value="0"> South Korea</label>
+                        <p>7. Which of these is a vector quantity?</p>
+                        <label><input type="radio" name="q7" value="1"> Velocity</label>
+                        <label><input type="radio" name="q7" value="0"> Speed</label>
+                        <label><input type="radio" name="q7" value="0"> Energy</label>
                     </div>
 
                     <!-- Question 8 -->
                     <div class="question" id="question-8">
-                        <p>8. What is the largest mammal in the world?</p>
-                        <label><input type="radio" name="q8" value="1"> Blue Whale</label>
-                        <label><input type="radio" name="q8" value="0"> Elephant</label>
-                        <label><input type="radio" name="q8" value="0"> Giraffe</label>
+                        <p>8. What is the principle behind the working of a hydraulic lift?</p>
+                        <label><input type="radio" name="q8" value="1"> Pascal's Principle</label>
+                        <label><input type="radio" name="q8" value="0"> Archimedes' Principle</label>
+                        <label><input type="radio" name="q8" value="0"> Bernoulli's Principle</label>
                     </div>
 
                     <!-- Question 9 -->
                     <div class="question" id="question-9">
-                        <p>9. Who painted the Mona Lisa?</p>
-                        <label><input type="radio" name="q9" value="1"> Leonardo da Vinci</label>
-                        <label><input type="radio" name="q9" value="0"> Vincent van Gogh</label>
-                        <label><input type="radio" name="q9" value="0"> Pablo Picasso</label>
+                        <p>9. Which color of light has the longest wavelength?</p>
+                        <label><input type="radio" name="q9" value="1"> Red</label>
+                        <label><input type="radio" name="q9" value="0"> Violet</label>
+                        <label><input type="radio" name="q9" value="0"> Green</label>
                     </div>
 
                     <!-- Question 10 -->
                     <div class="question" id="question-10">
-                        <p>10. What is the hardest natural substance on Earth?</p>
-                        <label><input type="radio" name="q10" value="1"> Diamond</label>
-                        <label><input type="radio" name="q10" value="0"> Gold</label>
-                        <label><input type="radio" name="q10" value="0"> Iron</label>
+                        <p>10. What is the energy of a photon proportional to?</p>
+                        <label><input type="radio" name="q10" value="1"> Its frequency</label>
+                        <label><input type="radio" name="q10" value="0"> Its wavelength</label>
+                        <label><input type="radio" name="q10" value="0"> Its amplitude</label>
                     </div>
 
                     <div class="quiz-nav">
@@ -484,7 +508,7 @@ $conn->close();
         <?php endif; ?>
 
         <div class="leaderboard" id="leaderboard">
-            <h2>Leaderboard</h2>
+            <h2>Physics Quiz Leaderboard</h2>
             <table>
                 <tr>
                     <th>Rank</th>
@@ -496,12 +520,12 @@ $conn->close();
                         <tr>
                             <td><?php echo $rank++; ?></td>
                             <td><?php echo htmlspecialchars($row['username']); ?></td>
-                            <td><?php echo $row['score']; ?></td>
+                            <td><?php echo $row['score']; ?>/10</td>
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="3">No scores yet!</td>
+                        <td colspan="3">No physics quiz scores yet!</td>
                     </tr>
                 <?php endif; ?>
             </table>
@@ -509,7 +533,7 @@ $conn->close();
     </div>
 
     <div class="footer">
-        <p>Quiz Application © 2025</p>
+        <p>Physics Quiz © 2025</p>
     </div>
 
     <script>

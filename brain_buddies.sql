@@ -106,3 +106,25 @@ CREATE TABLE quiz_results (
     score INT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE maths_quiz_results (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    score INT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE physics_quiz_results (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    score INT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE chemistry_quiz_results (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    score INT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
